@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GymManager API 테스트</title>
+<style>
+:root{color-scheme:light;--ink:#142439;--muted:#52647b;--line:#dce4ec;--bg:#f2f5f9;--accent:#17624e;--nav:#132438;--paper:#fff;font:15px/1.55 system-ui,"Malgun Gothic",sans-serif}
+*{box-sizing:border-box}body{margin:0;color:var(--ink);background:var(--bg)}button,input,select,textarea{font:inherit}button{cursor:pointer}a{color:inherit}button:disabled{cursor:wait;opacity:.65}
+:focus-visible{outline:3px solid #30a688;outline-offset:2px}
+.shell{display:grid;grid-template-columns:235px minmax(0,1fr);min-height:100vh}
+aside{background:var(--nav);color:#dce9f4;padding:28px 17px;position:sticky;top:0;height:100vh}
+.brand{display:flex;gap:11px;align-items:center;margin:0 6px 36px;font-weight:750;color:white;letter-spacing:-.025em}
+.brand-mark{display:grid;place-items:center;background:#277e68;width:37px;height:37px;border-radius:10px;color:#fff;font:700 16px ui-monospace,monospace}
+.nav-heading{display:block;font-size:.79rem;color:#a7b9cb;margin:0 10px 12px}
+nav{display:grid;gap:6px}nav button{text-align:left;background:none;color:inherit;border:1px solid transparent;border-radius:8px;padding:10px 12px}
+nav button[aria-pressed=true]{background:#254454;border-color:#456777;color:white;font-weight:700}nav button:hover{background:#294252}
+main{max-width:1600px;width:100%;padding:30px clamp(18px,3vw,47px) 45px;margin:auto}
+h1,h2,h3,p{margin:0}h1{font-size:clamp(1.6rem,3vw,2.3rem);letter-spacing:-.055em}h2{font-size:1.13rem;letter-spacing:-.035em}h3{font-size:.93rem}
+.lead{margin:4px 0 22px;color:var(--muted)}.panel{background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:19px;box-shadow:0 2px 4px #14243908;min-width:0}
+
+.note{font-size:.82rem;color:var(--muted);margin-top:8px}.notice{background:#fff7e7;border:1px solid #f1d7a2;color:#62470e;border-radius:8px;padding:9px 11px;margin:13px 0 0}
+.columns{display:grid;grid-template-columns:minmax(285px, .86fr) minmax(0,1.14fr);gap:16px;align-items:start}
+.stack{display:grid;gap:16px;min-width:0}.bar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:11px}.fields{display:grid;gap:11px}.pair{display:grid;grid-template-columns:1fr 1fr;gap:8px;min-width:0}
+label{display:grid;gap:4px;font-size:.86rem;font-weight:650;min-width:0}
+input:not([type=checkbox]),select,textarea{width:100%;background:white;color:var(--ink);border:1px solid #c8d4e0;border-radius:7px;padding:7px 9px;min-width:0}
+input[type=checkbox]{accent-color:var(--accent)}input[type=file]{font-size:.8rem}
+textarea,pre{font:13px/1.55 ui-monospace,Consolas,"Malgun Gothic",monospace}
+textarea#payload{min-height:230px;resize:vertical;background:#f8fafc;tab-size:2}
+pre{margin:10px 0 0;background:#14263b;color:#e6eff8;border-radius:8px;padding:12px;min-height:120px;max-height:400px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}
+.btn{border:1px solid #c8d4e0;background:#fff;color:var(--ink);border-radius:7px;padding:6px 10px;font-size:.83rem;font-weight:650}
+.btn:hover{background:#ecf2f6}.primary{background:var(--accent);color:white;border-color:var(--accent);padding:8px 14px}.primary:hover{background:#0e503e}
+.actions{display:flex;gap:7px;flex-wrap:wrap}.selection{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 8px;margin-top:6px}.check{display:flex;align-items:center;gap:5px;font-weight:500}.nested{grid-column:1/-1;padding-left:10px;border-left:2px solid var(--line)}
+fieldset{min-width:0;border:1px solid var(--line);border-radius:8px;padding:9px 11px}legend{font-size:.85rem;font-weight:700}.filter{display:grid;grid-template-columns:1fr .65fr;gap:7px;border-top:1px solid var(--line);padding:8px 0}.filter label:last-of-type{grid-column:1/-1}.filter .btn{justify-self:start}
+.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.metrics div{background:#f2f6fa;border-radius:7px;padding:6px 8px;font-size:.77rem;color:var(--muted);overflow-wrap:anywhere}.metrics strong{display:block;color:var(--ink);font-size:.88rem}.status{font-weight:700;color:var(--accent)}.status[data-error=true]{color:#a8322d}
+#message,#form-message{margin-top:8px;overflow-wrap:anywhere}.error{color:#a8322d}.image{margin-top:12px}.image img{display:block;max-width:100%;max-height:300px;margin-top:6px;border-radius:7px}.muted{color:var(--muted)}[hidden]{display:none!important}
+@media(max-width:1000px){.shell{grid-template-columns:180px minmax(0,1fr)}.columns{grid-template-columns:1fr}}
+@media(max-width:680px){.shell{display:block}aside{height:auto;position:static;padding:13px}nav{grid-template-columns:repeat(2,1fr)}.brand{margin:0 0 8px}.nav-heading{display:none}main{padding:14px}.pair{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside>
+  <div class="brand"><span class="brand-mark" aria-hidden="true">GM</span> GymManager</div>
+  <span class="nav-heading">테스트 기능</span>
+  <nav aria-label="테스트 기능">
+    <button type="button" data-mode="view" aria-pressed="true">뷰 조회</button>
+    <button type="button" data-mode="create" aria-pressed="false">레코드 등록</button>
+    <button type="button" data-mode="update" aria-pressed="false">레코드 수정</button>
+    <button type="button" data-mode="delete" aria-pressed="false">레코드 삭제</button>
+    <button type="button" data-mode="uploadPhoto" aria-pressed="false">사진 추가·교체</button>
+    <button type="button" data-mode="getPhoto" aria-pressed="false">사진 조회</button>
+    <button type="button" data-mode="removePhoto" aria-pressed="false">사진 제거</button>
+  </nav>
+</aside>
+<main>
+  <h1>API 테스트 도구</h1>
+  <p class="lead">접속 Google 계정의 권한으로 API 요청과 응답을 확인합니다.</p>
+  <div class="columns">
+    <section class="panel" aria-labelledby="form-title">
+      <div class="bar"><h2 id="form-title">뷰 조회</h2></div>
+      <div class="fields" id="fields"></div>
+      <p id="form-message" class="note error" role="status"></p>
+    </section>
+    <div class="stack">
+      <section class="panel" aria-labelledby="request-title">
+        <div class="bar"><h2 id="request-title">요청 JSON</h2><div class="actions">
+          <button type="button" class="btn" id="build">입력으로 생성</button>
+          <button type="button" class="btn" id="copy-request">요청 복사</button>
+          <button type="button" class="btn primary" id="send">요청 전송</button>
+        </div></div>
+        <textarea id="payload" aria-label="전송할 요청 JSON" spellcheck="false"></textarea>
+        <p id="request-note" class="note" role="status">편집기에 표시된 JSON을 그대로 전송합니다.</p>
+      </section>
+      <section class="panel" aria-labelledby="response-title">
+        <div class="bar"><h2 id="response-title">응답</h2><button type="button" class="btn" id="copy-response">응답 복사</button></div>
+        <div class="bar"><span class="status" id="status" role="status">대기 중</span></div>
+        <div class="metrics">
+          <div>API 오류 코드<strong id="code">—</strong></div>
+          <div>실행 소요 시간<strong id="duration">—</strong></div>
+        </div>
+        <p id="message" class="note" role="status"></p>
+        <pre id="response" aria-label="응답 본문">응답이 여기에 표시됩니다.</pre>
+        <div class="image" id="image-panel" hidden><h3>표시용 WebP</h3><img id="image" alt="조회한 회원 사진"></div>
+      </section>
+    </div>
+  </div>
+</main>
+</div>
+<script>
+'use strict';
+const el = id => document.getElementById(id);
+const own = (value, key) => Object.prototype.hasOwnProperty.call(value, key);
+const isObject = value => !!value && typeof value === 'object' && !Array.isArray(value);
+const fields = el('fields');
+const editor = el('payload');
+const viewFields = {
+  회원: { 회원id:'문자열', 회원명:'문자열', 회원사진:'문자열', 신분:'문자열', 연락처:'문자열', 입관일:'날짜', 회원정보:'문자열', 회원상태:'문자열', 최종만료일:'날짜', 보유회원권:'중첩' },
+  보유회원권: { 보유회원권id:'문자열', 회원id:'문자열', 회원권id:'문자열', 종류:'문자열', 기간:'문자열', 가격:'숫자', 결제일시:'일시', 시작일시:'일시', 만료일:'날짜', 실제만료일:'날짜', 상태:'문자열' },
+  출석: { 출석id:'문자열', 회원id:'문자열', 회원명:'문자열', 출석일시:'일시', 활동내역:'문자열' },
+  회원권상품: { 회원권id:'문자열', 종류:'문자열', 기간:'문자열', 가격:'숫자' },
+  기술: { 기술id:'문자열', 기술명:'문자열' },
+  변경이력: { 변경이력id:'문자열', 테이블명:'문자열', 레코드id:'문자열', 작업유형:'문자열', 변경일시:'일시', 변경자:'문자열', 변경전:'문자열', 변경후:'문자열' }
+};
+const tables = {
+  회원: ['회원id', { 회원명:'문자열', 신분:'문자열?', 연락처:'문자열?', 입관일:'날짜?', 회원정보:'문자열?' }],
+  기타연락처: ['기타연락처id', { 회원id:'문자열', 관계:'문자열', 연락처:'문자열' }, ['회원id']],
+  보유회원권: ['보유회원권id', { 회원id:'문자열', 회원권id:'문자열', 결제일시:'일시', 시작일시:'일시', 만료일:'날짜' }, ['회원id','회원권id']],
+  이용권연장: ['이용권연장기록id', { 보유회원권id:'문자열', 신청일시:'일시', 연장사유:'문자열?', 연장시작일:'날짜', 연장일수:'숫자' }, ['보유회원권id']],
+  일시정지: ['일시정지id', { 보유회원권id:'문자열', 정지시작일:'날짜', 복귀일:'날짜?' }, ['보유회원권id']],
+  출석: ['출석id', { 회원id:'문자열', 출석일시:'일시', 활동내역:'문자열?' }, ['회원id']],
+  회원권: ['회원권id', { 종류:'문자열', 기간:'문자열', 가격:'숫자' }],
+  기술: ['기술id', { 기술명:'문자열' }],
+  습득기술: ['습득기술id', { 회원id:'문자열', 기술id:'문자열' }, ['회원id','기술id']]
+};
+let mode = 'view';
+let target = '회원';
+let readForm;
+let formVersion = 0;
+let editVersion = 0;
+let needsBuild = false;
+let responseText = '';
+let imageUrl;
+function node(tag, text) {
+  const item = document.createElement(tag);
+  if (text !== undefined) item.textContent = text;
+  return item;
+}
+function label(text, control) {
+  const item = node('label', text);
+  control.setAttribute('aria-label', text);
+  item.append(control);
+  return item;
+}
+function select(options) {
+  const item = node('select');
+  for (const option of options) item.add(new Option(option, option));
+  return item;
+}
+function input(type = 'text', placeholder = '') {
+  const item = node('input');
+  item.type = type;
+  item.placeholder = placeholder;
+  item.autocomplete = 'off';
+  return item;
+}
+function miniButton(text, callback) {
+  const button = node('button', text);
+  button.type = 'button';
+  button.className = 'btn';
+  button.addEventListener('click', callback);
+  return button;
+}
+function check(text, checked = false) {
+  const control = input('checkbox');
+  control.checked = checked;
+  const wrapper = label(text, control);
+  wrapper.prepend(control);
+  wrapper.className = 'check';
+  return [wrapper, control];
+}
+function collectChecks(container, schema) {
+  const controls = [];
+  for (const [key, type] of Object.entries(schema)) {
+    if (type === '중첩') {
+      const nested = node('fieldset');
+      nested.className = 'nested';
+      nested.append(node('legend', key));
+      const group = node('div'); group.className = 'selection';
+      nested.append(group);
+      const getNested = collectChecks(group, viewFields[key]);
+      container.append(nested);
+      controls.push([key, () => getNested()]);
+    } else {
+      const [wrapper, control] = check(key);
+      container.append(wrapper);
+      controls.push([key, () => control.checked ? true : undefined]);
+    }
+  }
+  return () => Object.fromEntries(controls.flatMap(([key, value]) => {
+    const selected = value();
+    return selected === undefined || (isObject(selected) && !Object.keys(selected).length) ? [] : [[key, selected]];
+  }));
+}
+function showView() {
+  const schema = viewFields[target];
+  const projection = node('fieldset'); projection.append(node('legend', '반환 필드'));
+  const group = node('div'); group.className = 'selection';
+  const getSelection = collectChecks(group, schema);
+  projection.append(group, node('p', '선택하지 않으면 허용된 전체 필드를 반환합니다.'));
+  projection.lastChild.className = 'note';
+  const filterGroup = node('fieldset'); filterGroup.append(node('legend', '조회 조건'));
+  const rows = node('div');
+  const combine = select(['모두 충족', '하나 이상 충족']);
+  const joinLabel = label('조건 결합', combine); joinLabel.hidden = true;
+  const filters = new Map();
+  filterGroup.append(joinLabel, rows, miniButton('조건 추가', () => {
+    const row = node('div'); row.className = 'filter';
+    const field = select(Object.keys(schema).filter(key => schema[key] !== '중첩'));
+    const operators = select([]);
+    const value = input();
+    function syncOperators() {
+      const type = schema[field.value];
+      const allowed = type === '문자열' ? ['eq','ne','contains','in'] : ['eq','ne','gt','gte','lt','lte'];
+      operators.replaceChildren(...allowed.map(key => new Option(key, key)));
+      syncValue();
+    }
+    function syncValue() {
+      const type = schema[field.value];
+      value.placeholder = operators.value === 'in' ? '["값1","값2"]'
+        : type === '날짜' ? '2026-11-24' : type === '일시' ? '2026-11-24T09:00:00+09:00' : '비교값 (null 또는 값)';
+    }
+    field.addEventListener('change', syncOperators);
+    operators.addEventListener('change', syncValue);
+    syncOperators();
+    row.append(label('필드', field), label('연산자', operators), label('비교값', value), miniButton('조건 제거', () => {
+      filters.delete(row);
+      row.remove();
+      joinLabel.hidden = filters.size < 2;
+      formChanged();
+    }));
+    rows.append(row);
+    filters.set(row, () => {
+      let operand = value.value;
+      const op = operators.value;
+      if (op === 'in') {
+        operand = JSON.parse(operand);
+        if (!Array.isArray(operand) || !operand.every(item => typeof item === 'string')) {
+          throw new Error('in 비교값은 문자열 JSON 배열이어야 합니다.');
+        }
+      } else if (operand.trim() === 'null' && ['eq','ne'].includes(op)) {
+        operand = null;
+      } else if (schema[field.value] === '숫자') {
+        if (!operand.trim() || !Number.isFinite(Number(operand))) throw new Error('숫자 비교값을 입력하세요.');
+        operand = Number(operand);
+      }
+      return { [field.value]: { [op]: operand } };
+    });
+    joinLabel.hidden = filters.size < 2;
+    formChanged();
+  }));
+  fields.append(projection, filterGroup);
+  return () => {
+    const selectFields = getSelection();
+    const conditions = [...filters.values()].map(read => read());
+    return { view: target, ...(Object.keys(selectFields).length ? { select: selectFields } : {}),
+      ...(conditions.length ? { where: conditions.length === 1 ? conditions[0] :
+        { [combine.value === '하나 이상 충족' ? 'or' : 'and']: conditions } } : {}) };
+  };
+}
+function photoFields() {
+  const panel = node('fieldset'); panel.append(node('legend', '사진 파일'));
+  const original = input('file'); original.accept = '.jpg,.jpeg,.png,.webp,.heic,.heif';
+  const display = input('file'); display.accept = '.webp,image/webp';
+  const width = input('number'); width.min = 1;
+  const height = input('number'); height.min = 1;
+  const size = node('div'); size.className = 'pair';
+  size.append(label('가로 픽셀', width), label('세로 픽셀', height));
+  const guide = node('p', '원본과 같은 픽셀 크기의 품질 80% WebP를 선택하세요. 표시본 크기를 읽을 수 없으면 직접 입력하세요.');
+  guide.className = 'note';
+  panel.append(label('원본 파일', original), label('WebP 표시본', display), size, guide);
+  display.addEventListener('change', async () => {
+    const file = display.files[0];
+    if (!file || !window.createImageBitmap) return;
+    const initialWidth = width.value;
+    const initialHeight = height.value;
+    try {
+      const bitmap = await createImageBitmap(file);
+      if (file === display.files[0] && panel.isConnected && width.value === initialWidth && height.value === initialHeight) {
+        width.value = bitmap.width;
+        height.value = bitmap.height;
+        formChanged();
+      }
+      bitmap.close();
+    } catch (_) { /* 직접 입력 사용 */ }
+  });
+  function encode(file, extensions) {
+    if (!file) throw new Error('원본과 WebP 표시본을 모두 선택하세요.');
+    const extension = file.name.split('.').pop().toLowerCase();
+    if (!own(extensions, extension)) throw new Error('지원되지 않는 사진 확장자입니다.');
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve({ 파일명: file.name, 매체유형: extensions[extension], 데이터: reader.result.split(',')[1] });
+      reader.onerror = () => reject(new Error('사진 파일을 읽지 못했습니다.'));
+      reader.readAsDataURL(file);
+    });
+  }
+  return { panel, async read() {
+    const dimensions = [width.valueAsNumber, height.valueAsNumber];
+    if (!dimensions.every(value => Number.isInteger(value) && value > 0)) throw new Error('가로·세로 픽셀을 입력하세요.');
+    const [raw, webp] = await Promise.all([
+      encode(original.files[0], { jpg:'image/jpeg', jpeg:'image/jpeg', png:'image/png', webp:'image/webp', heic:'image/heic', heif:'image/heif' }),
+      encode(display.files[0], { webp:'image/webp' })
+    ]);
+    return { 가로: dimensions[0], 세로: dimensions[1], 품질: 0.8, 원본: raw, 표시본: webp };
+  } };
+}
+function showCommand() {
+  const isPhoto = ['uploadPhoto', 'getPhoto', 'removePhoto'].includes(mode);
+  const table = isPhoto ? '회원' : target;
+  const [key, schema, refs = []] = tables[table];
+  let id, expected, attach, photo;
+  const values = [];
+  if (mode !== 'create') {
+    id = input();
+    fields.append(label(key, id));
+  }
+  if (['uploadPhoto','removePhoto'].includes(mode)) {
+    expected = input('text', '사진이 없으면 빈 값');
+    fields.append(label('현재 표시용 WebP 파일 ID', expected));
+  }
+  if (['create','update'].includes(mode)) {
+    const definitions = mode === 'create' && table === '회원' ? { 회원id:'문자열', ...schema } : schema;
+    for (const [name, type] of Object.entries(definitions)) {
+      if ((mode === 'update' && refs.includes(name)) || (mode === 'create' && name === '복귀일')) continue;
+      const optional = type.endsWith('?');
+      const kind = type.replace('?', '');
+      const control = input(kind === '숫자' ? 'number' : kind === '날짜' ? 'date' : 'text',
+        kind === '일시' ? '2026-11-24T09:00:00+09:00' : '');
+      if (kind === '숫자') control.step = '1';
+      fields.append(label(name + (optional ? ' (선택)' : mode === 'create' ? ' (필수)' : ''), control));
+      values.push([name, control, kind]);
+    }
+  }
+  if (mode === 'create' && table === '회원') {
+    const [wrapper, control] = check('사진 함께 등록');
+    attach = control;
+    photo = photoFields();
+    photo.panel.hidden = true;
+    control.addEventListener('change', () => { photo.panel.hidden = !control.checked; });
+    fields.append(wrapper, photo.panel);
+  } else if (mode === 'uploadPhoto') {
+    photo = photoFields();
+    fields.append(photo.panel);
+  }
+  if (mode === 'update') {
+    const note = node('p', '값을 입력한 필드만 수정합니다. 선택 필드를 비우려면 요청 JSON에서 해당 필드를 null로 지정하세요.');
+    note.className = 'note'; fields.append(note);
+  }
+  return async () => {
+    const request = { action: mode, table };
+    if (id) request.id = id.value;
+    if (expected) request.expectedPhotoId = expected.value;
+    if (['create', 'update'].includes(mode)) {
+      request.data = Object.fromEntries(values.filter(([, control]) => control.value !== '')
+        .map(([name, control, kind]) => [name, kind === '숫자' ? control.valueAsNumber : control.value]));
+    }
+    if (photo && (!attach || attach.checked)) request.photo = await photo.read();
+    return request;
+  };
+}
+function render() {
+  formVersion++;
+  fields.replaceChildren();
+  el('form-title').textContent = document.querySelector(`[data-mode="${mode}"]`).textContent;
+  if (!['uploadPhoto','getPhoto','removePhoto'].includes(mode)) {
+    const picker = select(Object.keys(mode === 'view' ? viewFields : tables));
+    picker.value = target;
+    picker.addEventListener('change', event => {
+      event.stopPropagation();
+      target = picker.value;
+      render();
+    });
+    fields.append(label(mode === 'view' ? '조회 뷰' : '대상 테이블', picker));
+  }
+  readForm = mode === 'view' ? showView() : showCommand();
+  void build(true);
+}
+function formChanged() {
+  formVersion++;
+  needsBuild = true;
+  el('request-note').textContent = '입력이 변경되었습니다. 전송 본문에 반영하려면 ‘입력으로 생성’을 누르세요.';
+}
+async function build(clearOnError = false) {
+  const version = formVersion;
+  const edit = ++editVersion;
+  if (clearOnError) editor.value = '';
+  el('form-message').textContent = '';
+  try {
+    const request = await readForm();
+    if (version !== formVersion || edit !== editVersion) return;
+    editor.value = JSON.stringify(request, null, 2);
+    needsBuild = false;
+    el('request-note').textContent = '편집기에 표시된 JSON을 그대로 전송합니다.';
+  } catch (error) {
+    if (version === formVersion && edit === editVersion) {
+      el('form-message').textContent = error instanceof SyntaxError ? '조건의 JSON 형식을 확인하세요.' : error.message;
+    }
+  }
+}
+fields.addEventListener('input', formChanged);
+fields.addEventListener('change', formChanged);
+editor.addEventListener('input', () => {
+  editVersion++;
+  needsBuild = false;
+  el('request-note').textContent = '직접 편집한 JSON을 전송합니다.';
+});
+for (const button of document.querySelectorAll('[data-mode]')) {
+  button.addEventListener('click', () => {
+    if (button.dataset.mode === mode) return;
+    for (const tab of document.querySelectorAll('[data-mode]')) tab.setAttribute('aria-pressed', String(tab === button));
+    mode = button.dataset.mode;
+    target = '회원';
+    render();
+  });
+}
+el('build').addEventListener('click', () => void build());
+
+function clearImage() {
+  el('image-panel').hidden = true;
+  el('image').removeAttribute('src');
+  if (imageUrl) URL.revokeObjectURL(imageUrl);
+  imageUrl = undefined;
+}
+function showImage(data) {
+  if (data?.매체유형 !== 'image/webp' || typeof data.사진데이터 !== 'string') return;
+  try {
+    const bytes = Uint8Array.from(atob(data.사진데이터), character => character.charCodeAt(0));
+    const header = new TextDecoder().decode(bytes.subarray(0, 12));
+    if (!header.startsWith('RIFF') || !header.endsWith('WEBP')) return;
+    imageUrl = URL.createObjectURL(new Blob([bytes], { type: 'image/webp' }));
+    el('image').src = imageUrl;
+    el('image-panel').hidden = false;
+  } catch (_) { /* 응답 본문은 별도로 확인할 수 있음 */ }
+}
+el('image').addEventListener('error', () => {
+  clearImage();
+  el('message').textContent = '응답을 받았으나 WebP 미리보기를 표시할 수 없습니다.';
+});
+window.addEventListener('pagehide', clearImage);
+function status(text, error = false, message = '') {
+  el('status').textContent = text;
+  el('status').dataset.error = String(error);
+  el('message').textContent = message;
+}
+function isReadOnly(request) {
+  const keys = Object.keys(request);
+  if (typeof request.view === 'string' && own(viewFields, request.view)) {
+    return keys.every(key => ['view','select','where'].includes(key));
+  }
+  return request.action === 'getPhoto' && request.table === '회원' &&
+    typeof request.id === 'string' && keys.every(key => ['action','table','id'].includes(key));
+}
+function callApi(body) {
+  return new Promise((resolve, reject) => {
+    google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).runApiTest(body);
+  });
+}
+async function send() {
+  const button = el('send');
+  if (button.disabled) return;
+  clearImage();
+  responseText = '';
+  el('response').textContent = '';
+  for (const key of ['code', 'duration']) el(key).textContent = '—';
+  let payload;
+  const body = editor.value;
+  try {
+    if (needsBuild) throw new Error('변경한 입력을 먼저 요청 JSON에 반영하세요.');
+    payload = JSON.parse(body);
+    if (!isObject(payload)) throw new Error('요청 JSON은 객체여야 합니다.');
+  } catch (error) {
+    status('입력 오류', true, error instanceof SyntaxError ? '요청 JSON 문법을 확인하세요.' : error.message);
+    return;
+  }
+
+  if (!isReadOnly(payload) && !window.confirm(
+    `데이터를 변경할 수 있는 요청입니다.\n명령: ${payload.action ?? '미지정'}\n실제 요청을 전송할까요?`
+  )) {
+    status('전송 취소');
+    return;
+  }
+  if (typeof google === 'undefined' || !google.script?.run) {
+    status('실행 환경 오류', true, '이 페이지는 Apps Script 웹앱 주소에서 열어야 합니다.');
+    return;
+  }
+
+  button.disabled = true;
+  status('실행 중');
+  const started = performance.now();
+  try {
+    const raw = await callApi(body);
+    let result;
+    try { result = JSON.parse(raw); } catch (_) { /* 예상하지 못한 응답 */ }
+    responseText = result === undefined ? String(raw ?? '') : JSON.stringify(result, null, 2);
+    el('response').textContent = responseText || '응답 본문이 비어 있습니다.';
+    if (result?.성공 === false) {
+      const error = result.오류;
+      if (typeof error?.코드 === 'string') el('code').textContent = error.코드;
+      status('API 오류', true, typeof error?.메시지 === 'string' ? error.메시지 : 'API가 실패 응답을 반환했습니다.');
+    } else if (result?.성공 !== true) {
+      status('응답 형식 오류', true, '예상한 API JSON이 아닙니다.');
+    } else {
+      status('요청 성공');
+      if (payload.action === 'getPhoto') showImage(result.데이터);
+    }
+  } catch (_) {
+    status('Apps Script 호출 오류', true,
+      '서버 호출을 완료하지 못했습니다. Google 계정 권한과 Apps Script 실행 로그를 확인하세요. 변경 요청은 재전송 전에 반영 여부를 확인하세요.');
+  } finally {
+    el('duration').textContent = Math.round(performance.now() - started).toLocaleString('ko-KR') + ' 밀리초';
+    button.disabled = false;
+  }
+}
+async function copy(text, notice) {
+  if (!text) { notice.textContent = '복사할 본문이 없습니다.'; return; }
+  try {
+    if (!navigator.clipboard) throw new Error();
+    await navigator.clipboard.writeText(text);
+  } catch (_) {
+    const temp = node('textarea'); temp.value = text;
+    temp.setAttribute('readonly', '');
+    temp.style.position = 'fixed'; temp.style.opacity = '0';
+    const previous = document.activeElement;
+    document.body.append(temp);
+    temp.select();
+    let copied = false;
+    try { copied = document.execCommand('copy'); } catch (_) { /* 수동 복사 사용 */ }
+    temp.remove();
+    previous?.focus();
+    if (!copied) { notice.textContent = '자동 복사가 차단되었습니다. 본문을 선택해 직접 복사하세요.'; return; }
+  }
+  notice.textContent = '복사했습니다.';
+}
+el('send').addEventListener('click', () => void send());
+el('copy-request').addEventListener('click', () => void copy(editor.value, el('request-note')));
+el('copy-response').addEventListener('click', () => void copy(responseText, el('message')));
+render();
+</script>
+</body>
+</html>
