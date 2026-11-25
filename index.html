@@ -18,7 +18,7 @@ nav button[aria-pressed=true]{background:#254454;border-color:#456777;color:whit
 main{max-width:1600px;width:100%;padding:30px clamp(18px,3vw,47px) 45px;margin:auto}
 h1,h2,h3,p{margin:0}h1{font-size:clamp(1.6rem,3vw,2.3rem);letter-spacing:-.055em}h2{font-size:1.13rem;letter-spacing:-.035em}h3{font-size:.93rem}
 .lead{margin:4px 0 22px;color:var(--muted)}.panel{background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:19px;box-shadow:0 2px 4px #14243908;min-width:0}
-
+.connection{margin-bottom:16px}.connection h2{margin-bottom:12px}.connection-grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(175px,1fr);gap:11px}
 .note{font-size:.82rem;color:var(--muted);margin-top:8px}.notice{background:#fff7e7;border:1px solid #f1d7a2;color:#62470e;border-radius:8px;padding:9px 11px;margin:13px 0 0}
 .columns{display:grid;grid-template-columns:minmax(285px, .86fr) minmax(0,1.14fr);gap:16px;align-items:start}
 .stack{display:grid;gap:16px;min-width:0}.bar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:11px}.fields{display:grid;gap:11px}.pair{display:grid;grid-template-columns:1fr 1fr;gap:8px;min-width:0}
@@ -32,9 +32,9 @@ pre{margin:10px 0 0;background:#14263b;color:#e6eff8;border-radius:8px;padding:1
 .btn:hover{background:#ecf2f6}.primary{background:var(--accent);color:white;border-color:var(--accent);padding:8px 14px}.primary:hover{background:#0e503e}
 .actions{display:flex;gap:7px;flex-wrap:wrap}.selection{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 8px;margin-top:6px}.check{display:flex;align-items:center;gap:5px;font-weight:500}.nested{grid-column:1/-1;padding-left:10px;border-left:2px solid var(--line)}
 fieldset{min-width:0;border:1px solid var(--line);border-radius:8px;padding:9px 11px}legend{font-size:.85rem;font-weight:700}.filter{display:grid;grid-template-columns:1fr .65fr;gap:7px;border-top:1px solid var(--line);padding:8px 0}.filter label:last-of-type{grid-column:1/-1}.filter .btn{justify-self:start}
-.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.metrics div{background:#f2f6fa;border-radius:7px;padding:6px 8px;font-size:.77rem;color:var(--muted);overflow-wrap:anywhere}.metrics strong{display:block;color:var(--ink);font-size:.88rem}.status{font-weight:700;color:var(--accent)}.status[data-error=true]{color:#a8322d}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.metrics div{background:#f2f6fa;border-radius:7px;padding:6px 8px;font-size:.77rem;color:var(--muted);overflow-wrap:anywhere}.metrics strong{display:block;color:var(--ink);font-size:.88rem}.status{font-weight:700;color:var(--accent)}.status[data-error=true]{color:#a8322d}
 #message,#form-message{margin-top:8px;overflow-wrap:anywhere}.error{color:#a8322d}.image{margin-top:12px}.image img{display:block;max-width:100%;max-height:300px;margin-top:6px;border-radius:7px}.muted{color:var(--muted)}[hidden]{display:none!important}
-@media(max-width:1000px){.shell{grid-template-columns:180px minmax(0,1fr)}.columns{grid-template-columns:1fr}}
+@media(max-width:1000px){.shell{grid-template-columns:180px minmax(0,1fr)}.columns{grid-template-columns:1fr}.connection-grid{grid-template-columns:1fr}}
 @media(max-width:680px){.shell{display:block}aside{height:auto;position:static;padding:13px}nav{grid-template-columns:repeat(2,1fr)}.brand{margin:0 0 8px}.nav-heading{display:none}main{padding:14px}.pair{grid-template-columns:1fr}}
 </style>
 </head>
@@ -55,7 +55,16 @@ fieldset{min-width:0;border:1px solid var(--line);border-radius:8px;padding:9px 
 </aside>
 <main>
   <h1>API 테스트 도구</h1>
-  <p class="lead">접속 Google 계정의 권한으로 API 요청과 응답을 확인합니다.</p>
+  <p class="lead">요청을 구성하고 Google Apps Script의 응답을 확인합니다.</p>
+  <section class="panel connection" aria-labelledby="connection-title">
+    <h2 id="connection-title">연결 설정</h2>
+    <div class="connection-grid">
+      <label>API 엔드포인트<input id="endpoint" type="url" spellcheck="false" autocomplete="off" value="https://script.google.com/macros/s/AKfycbxxRWTvLzBOYQnpf3YpfNQlSDW7JixCkVaKxpu-3S-2sNmS8DuM3REre-SBGueD5MTMAA/exec"></label>
+      <label>Google 액세스 토큰 (선택)<input id="token" type="password" autocomplete="off" spellcheck="false" placeholder="액세스 토큰 입력"></label>
+    </div>
+    <p class="note">토큰은 이 페이지의 메모리에만 유지합니다. 토큰이 비어 있으면 브라우저 세션으로 요청합니다. 토큰을 사용할 때는 신뢰하는 HTTPS 주소를 입력하세요.</p>
+    <p class="note notice">브라우저의 교차 출처 정책 또는 Google 로그인 리다이렉트로 호출이 차단될 수 있습니다. 요청은 전송 버튼을 눌렀을 때만 실행됩니다.</p>
+  </section>
   <div class="columns">
     <section class="panel" aria-labelledby="form-title">
       <div class="bar"><h2 id="form-title">뷰 조회</h2></div>
@@ -76,8 +85,9 @@ fieldset{min-width:0;border:1px solid var(--line);border-radius:8px;padding:9px 
         <div class="bar"><h2 id="response-title">응답</h2><button type="button" class="btn" id="copy-response">응답 복사</button></div>
         <div class="bar"><span class="status" id="status" role="status">대기 중</span></div>
         <div class="metrics">
+          <div>HTTP 상태<strong id="http">—</strong></div>
           <div>API 오류 코드<strong id="code">—</strong></div>
-          <div>실행 소요 시간<strong id="duration">—</strong></div>
+          <div>응답 소요 시간<strong id="duration">—</strong></div>
         </div>
         <p id="message" class="note" role="status"></p>
         <pre id="response" aria-label="응답 본문">응답이 여기에 표시됩니다.</pre>
@@ -427,7 +437,10 @@ el('image').addEventListener('error', () => {
   clearImage();
   el('message').textContent = '응답을 받았으나 WebP 미리보기를 표시할 수 없습니다.';
 });
-window.addEventListener('pagehide', clearImage);
+window.addEventListener('pagehide', () => {
+  el('token').value = '';
+  clearImage();
+});
 function status(text, error = false, message = '') {
   el('status').textContent = text;
   el('status').dataset.error = String(error);
@@ -441,62 +454,69 @@ function isReadOnly(request) {
   return request.action === 'getPhoto' && request.table === '회원' &&
     typeof request.id === 'string' && keys.every(key => ['action','table','id'].includes(key));
 }
-function callApi(body) {
-  return new Promise((resolve, reject) => {
-    google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).runApiTest(body);
-  });
-}
 async function send() {
   const button = el('send');
   if (button.disabled) return;
   clearImage();
   responseText = '';
   el('response').textContent = '';
-  for (const key of ['code', 'duration']) el(key).textContent = '—';
-  let payload;
+  for (const key of ['http', 'code', 'duration']) el(key).textContent = '—';
+  let payload, endpoint, token;
   const body = editor.value;
   try {
     if (needsBuild) throw new Error('변경한 입력을 먼저 요청 JSON에 반영하세요.');
     payload = JSON.parse(body);
     if (!isObject(payload)) throw new Error('요청 JSON은 객체여야 합니다.');
+    endpoint = new URL(el('endpoint').value.trim());
+    if (!['https:', 'http:'].includes(endpoint.protocol) || endpoint.username || endpoint.password) {
+      throw new Error('사용자 정보가 없는 HTTP 또는 HTTPS 주소를 입력하세요.');
+    }
+    token = el('token').value.trim();
+    if (token && endpoint.protocol !== 'https:') throw new Error('액세스 토큰은 HTTPS 주소에만 보낼 수 있습니다.');
   } catch (error) {
-    status('입력 오류', true, error instanceof SyntaxError ? '요청 JSON 문법을 확인하세요.' : error.message);
+    const message = error instanceof SyntaxError ? '요청 JSON 문법을 확인하세요.'
+      : error instanceof TypeError ? '엔드포인트 주소를 확인하세요.' : error.message;
+    status('입력 오류', true, message);
     return;
   }
 
   if (!isReadOnly(payload) && !window.confirm(
-    `데이터를 변경할 수 있는 요청입니다.\n명령: ${payload.action ?? '미지정'}\n실제 요청을 전송할까요?`
+    `데이터를 변경할 수 있는 요청입니다.\n대상: ${endpoint.origin}\n명령: ${payload.action ?? '미지정'}\n실제 요청을 전송할까요?`
   )) {
     status('전송 취소');
     return;
   }
-  if (typeof google === 'undefined' || !google.script?.run) {
-    status('실행 환경 오류', true, '이 페이지는 Apps Script 웹앱 주소에서 열어야 합니다.');
-    return;
-  }
 
+  const headers = { 'Content-Type': 'application/json; charset=utf-8' };
+  if (token) headers.Authorization = 'Bearer ' + token;
   button.disabled = true;
-  status('실행 중');
+  status('전송 중');
   const started = performance.now();
+  let received;
   try {
-    const raw = await callApi(body);
+    received = await fetch(endpoint, { method: 'POST', mode: 'cors', redirect: 'follow',
+      credentials: token ? 'omit' : 'include', headers, body, cache: 'no-store' });
+    el('http').textContent = String(received.status);
+    const raw = await received.text();
     let result;
-    try { result = JSON.parse(raw); } catch (_) { /* 예상하지 못한 응답 */ }
-    responseText = result === undefined ? String(raw ?? '') : JSON.stringify(result, null, 2);
+    try { result = JSON.parse(raw); } catch (_) { /* 원문 표시 */ }
+    responseText = result === undefined ? raw : JSON.stringify(result, null, 2);
     el('response').textContent = responseText || '응답 본문이 비어 있습니다.';
-    if (result?.성공 === false) {
-      const error = result.오류;
-      if (typeof error?.코드 === 'string') el('code').textContent = error.코드;
-      status('API 오류', true, typeof error?.메시지 === 'string' ? error.메시지 : 'API가 실패 응답을 반환했습니다.');
-    } else if (result?.성공 !== true) {
-      status('응답 형식 오류', true, '예상한 API JSON이 아닙니다.');
-    } else {
+    const apiError = result?.오류;
+    if (typeof apiError?.코드 === 'string') el('code').textContent = apiError.코드;
+    const errorMessage = typeof apiError?.메시지 === 'string' ? apiError.메시지 : '';
+    if (!received.ok) status('HTTP 오류', true, errorMessage || '서버 또는 Google 플랫폼이 요청을 거부했습니다.');
+    else if (result?.성공 === false) status('API 오류', true, errorMessage || 'API가 실패 응답을 반환했습니다.');
+    else if (result?.성공 !== true) status('응답 형식 오류', true,
+      '예상한 API JSON이 아닙니다. Google 로그인, 권한 또는 리다이렉트 응답을 확인하세요.');
+    else {
       status('요청 성공');
       if (payload.action === 'getPhoto') showImage(result.데이터);
     }
   } catch (_) {
-    status('Apps Script 호출 오류', true,
-      '서버 호출을 완료하지 못했습니다. Google 계정 권한과 Apps Script 실행 로그를 확인하세요. 변경 요청은 재전송 전에 반영 여부를 확인하세요.');
+    status('브라우저 네트워크 오류', true, received
+      ? '응답 본문을 읽지 못했습니다. 변경 요청은 재전송 전에 반영 여부를 확인하세요.'
+      : '요청 또는 응답이 차단되었습니다. CORS, Google 로그인, 리다이렉트 및 네트워크를 확인하세요. 변경 요청은 재전송 전에 반영 여부를 확인하세요.');
   } finally {
     el('duration').textContent = Math.round(performance.now() - started).toLocaleString('ko-KR') + ' 밀리초';
     button.disabled = false;
