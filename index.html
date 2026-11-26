@@ -18,7 +18,7 @@ nav button[aria-pressed=true]{background:#254454;border-color:#456777;color:whit
 main{max-width:1600px;width:100%;padding:30px clamp(18px,3vw,47px) 45px;margin:auto}
 h1,h2,h3,p{margin:0}h1{font-size:clamp(1.6rem,3vw,2.3rem);letter-spacing:-.055em}h2{font-size:1.13rem;letter-spacing:-.035em}h3{font-size:.93rem}
 .lead{margin:4px 0 22px;color:var(--muted)}.panel{background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:19px;box-shadow:0 2px 4px #14243908;min-width:0}
-.connection{margin-bottom:16px}.connection h2{margin-bottom:12px}.connection-grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(175px,1fr);gap:11px}
+
 .note{font-size:.82rem;color:var(--muted);margin-top:8px}.notice{background:#fff7e7;border:1px solid #f1d7a2;color:#62470e;border-radius:8px;padding:9px 11px;margin:13px 0 0}
 .columns{display:grid;grid-template-columns:minmax(285px, .86fr) minmax(0,1.14fr);gap:16px;align-items:start}
 .stack{display:grid;gap:16px;min-width:0}.bar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:11px}.fields{display:grid;gap:11px}.pair{display:grid;grid-template-columns:1fr 1fr;gap:8px;min-width:0}
@@ -32,9 +32,9 @@ pre{margin:10px 0 0;background:#14263b;color:#e6eff8;border-radius:8px;padding:1
 .btn:hover{background:#ecf2f6}.primary{background:var(--accent);color:white;border-color:var(--accent);padding:8px 14px}.primary:hover{background:#0e503e}
 .actions{display:flex;gap:7px;flex-wrap:wrap}.selection{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 8px;margin-top:6px}.check{display:flex;align-items:center;gap:5px;font-weight:500}.nested{grid-column:1/-1;padding-left:10px;border-left:2px solid var(--line)}
 fieldset{min-width:0;border:1px solid var(--line);border-radius:8px;padding:9px 11px}legend{font-size:.85rem;font-weight:700}.filter{display:grid;grid-template-columns:1fr .65fr;gap:7px;border-top:1px solid var(--line);padding:8px 0}.filter label:last-of-type{grid-column:1/-1}.filter .btn{justify-self:start}
-.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.metrics div{background:#f2f6fa;border-radius:7px;padding:6px 8px;font-size:.77rem;color:var(--muted);overflow-wrap:anywhere}.metrics strong{display:block;color:var(--ink);font-size:.88rem}.status{font-weight:700;color:var(--accent)}.status[data-error=true]{color:#a8322d}
+.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.metrics div{background:#f2f6fa;border-radius:7px;padding:6px 8px;font-size:.77rem;color:var(--muted);overflow-wrap:anywhere}.metrics strong{display:block;color:var(--ink);font-size:.88rem}.status{font-weight:700;color:var(--accent)}.status[data-error=true]{color:#a8322d}
 #message,#form-message{margin-top:8px;overflow-wrap:anywhere}.error{color:#a8322d}.image{margin-top:12px}.image img{display:block;max-width:100%;max-height:300px;margin-top:6px;border-radius:7px}.muted{color:var(--muted)}[hidden]{display:none!important}
-@media(max-width:1000px){.shell{grid-template-columns:180px minmax(0,1fr)}.columns{grid-template-columns:1fr}.connection-grid{grid-template-columns:1fr}}
+@media(max-width:1000px){.shell{grid-template-columns:180px minmax(0,1fr)}.columns{grid-template-columns:1fr}}
 @media(max-width:680px){.shell{display:block}aside{height:auto;position:static;padding:13px}nav{grid-template-columns:repeat(2,1fr)}.brand{margin:0 0 8px}.nav-heading{display:none}main{padding:14px}.pair{grid-template-columns:1fr}}
 </style>
 </head>
@@ -55,16 +55,7 @@ fieldset{min-width:0;border:1px solid var(--line);border-radius:8px;padding:9px 
 </aside>
 <main>
   <h1>API 테스트 도구</h1>
-  <p class="lead">요청을 구성하고 Google Apps Script의 응답을 확인합니다.</p>
-  <section class="panel connection" aria-labelledby="connection-title">
-    <h2 id="connection-title">연결 설정</h2>
-    <div class="connection-grid">
-      <label>API 엔드포인트<input id="endpoint" type="url" spellcheck="false" autocomplete="off" value="https://script.google.com/macros/s/AKfycbxxRWTvLzBOYQnpf3YpfNQlSDW7JixCkVaKxpu-3S-2sNmS8DuM3REre-SBGueD5MTMAA/exec"></label>
-      <label>Google 액세스 토큰 (선택)<input id="token" type="password" autocomplete="off" spellcheck="false" placeholder="액세스 토큰 입력"></label>
-    </div>
-    <p class="note">토큰은 이 페이지의 메모리에만 유지합니다. 토큰이 비어 있으면 브라우저 세션으로 요청합니다. 토큰을 사용할 때는 신뢰하는 HTTPS 주소를 입력하세요.</p>
-    <p class="note notice">브라우저의 교차 출처 정책 또는 Google 로그인 리다이렉트로 호출이 차단될 수 있습니다. 요청은 전송 버튼을 눌렀을 때만 실행됩니다.</p>
-  </section>
+  <p class="lead">API 요청과 응답을 확인합니다. 통신 방식 <strong id="transport"></strong></p>
   <div class="columns">
     <section class="panel" aria-labelledby="form-title">
       <div class="bar"><h2 id="form-title">뷰 조회</h2></div>
@@ -85,9 +76,8 @@ fieldset{min-width:0;border:1px solid var(--line);border-radius:8px;padding:9px 
         <div class="bar"><h2 id="response-title">응답</h2><button type="button" class="btn" id="copy-response">응답 복사</button></div>
         <div class="bar"><span class="status" id="status" role="status">대기 중</span></div>
         <div class="metrics">
-          <div>HTTP 상태<strong id="http">—</strong></div>
           <div>API 오류 코드<strong id="code">—</strong></div>
-          <div>응답 소요 시간<strong id="duration">—</strong></div>
+          <div>실행 소요 시간<strong id="duration">—</strong></div>
         </div>
         <p id="message" class="note" role="status"></p>
         <pre id="response" aria-label="응답 본문">응답이 여기에 표시됩니다.</pre>
@@ -126,6 +116,7 @@ const tables = {
 let mode = 'view';
 let target = '회원';
 let readForm;
+let verifyPhoto;
 let formVersion = 0;
 let editVersion = 0;
 let needsBuild = false;
@@ -258,51 +249,178 @@ function showView() {
         { [combine.value === '하나 이상 충족' ? 'or' : 'and']: conditions } } : {}) };
   };
 }
+function photoBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.slice(reader.result.indexOf(',') + 1));
+    reader.onerror = () => reject(new Error('사진 파일을 읽지 못했습니다.'));
+    reader.readAsDataURL(blob);
+  });
+}
+async function photoDecodeSource(file, mime) {
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(mime)) return file.slice(0, file.size, mime);
+  const buffer = await file.arrayBuffer();
+  const bytes = new Uint8Array(buffer);
+  const data = new DataView(buffer);
+  const tag = (offset, text) => Array.from(text).every((char, index) => bytes[offset + index] === char.charCodeAt(0));
+  const parts = [];
+  let retainedFrom = 0;
+  const omit = (start, end) => {
+    parts.push(bytes.subarray(retainedFrom, start));
+    retainedFrom = end;
+  };
+  // Remove orientation metadata only in the temporary decode input. Some browsers
+  // honor EXIF rotation even with imageOrientation set to none.
+  const invalid = () => new Error('Invalid image container');
+  if (mime === 'image/jpeg') {
+    if (!tag(0, '\xff\xd8')) throw invalid();
+    for (let offset = 2;;) {
+      const start = offset;
+      if (bytes[offset++] !== 255) throw invalid();
+      while (bytes[offset] === 255) offset++;
+      const marker = bytes[offset++];
+      if (marker === 0x01) continue; // Standalone TEM marker has no length.
+      if (offset + 2 > bytes.length || marker === 0xd9 || marker === 0) throw invalid();
+      const length = data.getUint16(offset);
+      const end = offset + length;
+      if (length < 2 || end > bytes.length) throw invalid();
+      if (marker === 0xda) break; // The decoder handles entropy-coded scans.
+      if (marker === 0xe1 && length >= 8 && tag(offset + 2, 'Exif\0\0')) omit(start, end);
+      offset = end;
+    }
+  } else if (mime === 'image/png') {
+    if (!tag(0, '\x89PNG\r\n\x1a\n')) throw invalid();
+    for (let offset = 8;;) {
+      if (offset + 12 > bytes.length) throw invalid();
+      const length = data.getUint32(offset);
+      const end = offset + 12 + length;
+      if (end > bytes.length) throw invalid();
+      if (tag(offset + 4, 'IEND')) {
+        if (length !== 0 || end !== bytes.length) throw invalid();
+        break;
+      }
+      // Complete chunks include their own CRC, so retained chunks need no changes.
+      if (tag(offset + 4, 'eXIf')) omit(offset, end);
+      offset = end;
+    }
+  } else {
+    if (!tag(0, 'RIFF') || !tag(8, 'WEBP') || data.getUint32(4, true) !== bytes.length - 8) throw invalid();
+    let flags;
+    let removed = 0;
+    for (let offset = 12; offset < bytes.length;) {
+      if (offset + 8 > bytes.length) throw invalid();
+      const size = data.getUint32(offset + 4, true);
+      const padding = size % 2;
+      const end = offset + 8 + size + padding;
+      if (end > bytes.length || (padding && bytes[end - 1] !== 0)) throw invalid();
+      if (tag(offset, 'VP8X')) {
+        if (offset !== 12 || size !== 10) throw invalid();
+        flags = offset + 8;
+      }
+      if (tag(offset, 'EXIF')) {
+        omit(offset, end);
+        removed += end - offset;
+      }
+      offset = end;
+    }
+    if (removed) {
+      data.setUint32(4, bytes.length - removed - 8, true);
+      if (flags !== undefined) bytes[flags] &= ~0x08; // Preserve alpha, animation, ICC and XMP flags.
+    }
+  }
+  if (!parts.length) return file.slice(0, file.size, mime);
+  parts.push(bytes.subarray(retainedFrom));
+  return new Blob(parts, { type: mime });
+}
+async function convertPhoto(file) {
+  const formats = { jpg:'image/jpeg', jpeg:'image/jpeg', png:'image/png', webp:'image/webp', heic:'image/heic', heif:'image/heif' };
+  const extension = /\.([a-z]+)$/i.exec(file.name)?.[1].toLowerCase();
+  if (!own(formats, extension)) throw new Error('JPEG, PNG, WebP, HEIC 또는 HEIF 파일을 선택하세요.');
+  const mime = formats[extension];
+  if (!window.createImageBitmap) throw new Error('이 브라우저는 사진 픽셀을 읽는 기능을 지원하지 않습니다.');
+
+  let bitmap;
+  try {
+    // The API compares encoded dimensions, before any EXIF rotation.
+    bitmap = await createImageBitmap(await photoDecodeSource(file, mime), { imageOrientation: 'none' });
+  } catch (_) {
+    throw new Error(extension === 'heic' || extension === 'heif'
+      ? '이 브라우저에서 HEIC/HEIF 사진을 열 수 없습니다. 지원하는 브라우저를 사용하거나 JPEG 또는 PNG 파일을 선택하세요.'
+      : '사진을 열 수 없습니다. 파일이 손상되었거나 브라우저에서 해당 이미지를 지원하지 않습니다.');
+  }
+
+  const { width, height } = bitmap;
+  const quality = 0.8;
+  let webp;
+  const canvas = node('canvas');
+  try {
+    canvas.width = width;
+    canvas.height = height;
+    canvas.getContext('2d').drawImage(bitmap, 0, 0);
+    webp = await new Promise(resolve => canvas.toBlob(resolve, 'image/webp', quality));
+    if (!webp?.size || webp.type !== 'image/webp') throw new Error();
+  } catch (_) {
+    throw new Error('원본 해상도의 WebP를 만들지 못했습니다. 브라우저의 WebP 인코딩 지원과 이미지 크기를 확인하세요.');
+  } finally {
+    bitmap.close();
+    canvas.width = canvas.height = 0;
+  }
+  const [originalData, displayData] = await Promise.all([photoBase64(file), photoBase64(webp)]);
+  return { webpSize: webp.size, photo: {
+    가로: width, 세로: height, 품질: quality,
+    원본: { 파일명: file.name, 매체유형: mime, 데이터: originalData },
+    표시본: { 파일명: file.name.replace(/\.[^.]+$/, '.webp'), 매체유형: 'image/webp', 데이터: displayData }
+  } };
+}
 function photoFields() {
   const panel = node('fieldset'); panel.append(node('legend', '사진 파일'));
   const original = input('file'); original.accept = '.jpg,.jpeg,.png,.webp,.heic,.heif';
-  const display = input('file'); display.accept = '.webp,image/webp';
-  const width = input('number'); width.min = 1;
-  const height = input('number'); height.min = 1;
-  const size = node('div'); size.className = 'pair';
-  size.append(label('가로 픽셀', width), label('세로 픽셀', height));
-  const guide = node('p', '원본과 같은 픽셀 크기의 품질 80% WebP를 선택하세요. 표시본 크기를 읽을 수 없으면 직접 입력하세요.');
-  guide.className = 'note';
-  panel.append(label('원본 파일', original), label('WebP 표시본', display), size, guide);
-  display.addEventListener('change', async () => {
-    const file = display.files[0];
-    if (!file || !window.createImageBitmap) return;
-    const initialWidth = width.value;
-    const initialHeight = height.value;
+  const details = node('div'); details.className = 'image'; details.hidden = true;
+  const preview = node('img'); preview.alt = '변환된 회원 사진 미리보기';
+  const summary = node('p'); summary.className = 'note';
+  details.append(preview, summary);
+  const message = node('p', '원본을 선택하면 같은 해상도의 품질 80% WebP를 생성합니다.');
+  message.className = 'note';
+  message.setAttribute('role', 'status');
+  panel.append(label('원본 파일', original), message, details);
+
+  let selection = 0;
+  let photo;
+  let photoError = '원본 사진을 선택하세요.';
+  original.addEventListener('change', async event => {
+    event.stopPropagation();
+    const version = ++selection;
+    const file = original.files[0];
+    photo = undefined;
+    details.hidden = true;
+    preview.removeAttribute('src');
+    editor.value = '';
+    el('form-message').textContent = '';
+    formChanged();
+    photoError = file ? '사진 변환이 완료될 때까지 기다리세요.' : '원본 사진을 선택하세요.';
+    message.classList.remove('error');
+    message.textContent = photoError;
+    if (!file) return;
+    const stillSelected = () => version === selection && panel.isConnected && original.files[0] === file;
     try {
-      const bitmap = await createImageBitmap(file);
-      if (file === display.files[0] && panel.isConnected && width.value === initialWidth && height.value === initialHeight) {
-        width.value = bitmap.width;
-        height.value = bitmap.height;
-        formChanged();
-      }
-      bitmap.close();
-    } catch (_) { /* 직접 입력 사용 */ }
+      const result = await convertPhoto(file);
+      if (!stillSelected()) return;
+      photo = result.photo;
+      preview.src = 'data:image/webp;base64,' + photo.표시본.데이터;
+      summary.textContent = `${photo.가로} × ${photo.세로} px · 원본 ${file.size.toLocaleString('ko-KR')} 바이트 · WebP ${result.webpSize.toLocaleString('ko-KR')} 바이트`;
+      details.hidden = false;
+      message.textContent = '사진 변환 완료';
+      if (!panel.hidden && editor.value === '') void build();
+    } catch (error) {
+      if (!stillSelected()) return;
+      photoError = error.message;
+      message.classList.add('error');
+      message.textContent = photoError;
+    }
   });
-  function encode(file, extensions) {
-    if (!file) throw new Error('원본과 WebP 표시본을 모두 선택하세요.');
-    const extension = file.name.split('.').pop().toLowerCase();
-    if (!own(extensions, extension)) throw new Error('지원되지 않는 사진 확장자입니다.');
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve({ 파일명: file.name, 매체유형: extensions[extension], 데이터: reader.result.split(',')[1] });
-      reader.onerror = () => reject(new Error('사진 파일을 읽지 못했습니다.'));
-      reader.readAsDataURL(file);
-    });
-  }
-  return { panel, async read() {
-    const dimensions = [width.valueAsNumber, height.valueAsNumber];
-    if (!dimensions.every(value => Number.isInteger(value) && value > 0)) throw new Error('가로·세로 픽셀을 입력하세요.');
-    const [raw, webp] = await Promise.all([
-      encode(original.files[0], { jpg:'image/jpeg', jpeg:'image/jpeg', png:'image/png', webp:'image/webp', heic:'image/heic', heif:'image/heif' }),
-      encode(display.files[0], { webp:'image/webp' })
-    ]);
-    return { 가로: dimensions[0], 세로: dimensions[1], 품질: 0.8, 원본: raw, 표시본: webp };
+  return { panel, read() {
+    if (!photo) throw new Error(photoError);
+    return photo;
   } };
 }
 function showCommand() {
@@ -337,11 +455,29 @@ function showCommand() {
     attach = control;
     photo = photoFields();
     photo.panel.hidden = true;
-    control.addEventListener('change', () => { photo.panel.hidden = !control.checked; });
+    control.addEventListener('change', () => {
+      photo.panel.hidden = !control.checked;
+      editor.value = '';
+    });
     fields.append(wrapper, photo.panel);
   } else if (mode === 'uploadPhoto') {
     photo = photoFields();
     fields.append(photo.panel);
+  }
+  if (photo) {
+    verifyPhoto = request => {
+      if (attach && !attach.checked && !own(request, 'photo')) return;
+      if (attach && !attach.checked) throw new Error('사진을 보내려면 ‘사진 함께 등록’을 선택하세요.');
+      const current = photo.read();
+      const candidate = request.photo;
+      const sameImage = (actual, expected) => isObject(actual) &&
+        Object.keys(expected).every(key => actual[key] === expected[key]);
+      if (candidate?.가로 !== current.가로 || candidate?.세로 !== current.세로 ||
+          candidate?.품질 !== current.품질 || !sameImage(candidate.원본, current.원본) ||
+          !sameImage(candidate.표시본, current.표시본)) {
+        throw new Error('현재 선택한 사진으로 요청 JSON을 다시 생성하세요.');
+      }
+    };
   }
   if (mode === 'update') {
     const note = node('p', '값을 입력한 필드만 수정합니다. 선택 필드를 비우려면 요청 JSON에서 해당 필드를 null로 지정하세요.');
@@ -361,6 +497,7 @@ function showCommand() {
 }
 function render() {
   formVersion++;
+  verifyPhoto = undefined;
   fields.replaceChildren();
   el('form-title').textContent = document.querySelector(`[data-mode="${mode}"]`).textContent;
   if (!['uploadPhoto','getPhoto','removePhoto'].includes(mode)) {
@@ -437,10 +574,7 @@ el('image').addEventListener('error', () => {
   clearImage();
   el('message').textContent = '응답을 받았으나 WebP 미리보기를 표시할 수 없습니다.';
 });
-window.addEventListener('pagehide', () => {
-  el('token').value = '';
-  clearImage();
-});
+window.addEventListener('pagehide', clearImage);
 function status(text, error = false, message = '') {
   el('status').textContent = text;
   el('status').dataset.error = String(error);
@@ -454,69 +588,86 @@ function isReadOnly(request) {
   return request.action === 'getPhoto' && request.table === '회원' &&
     typeof request.id === 'string' && keys.every(key => ['action','table','id'].includes(key));
 }
+const HTTP_API_URL =
+  'https://script.google.com/macros/s/AKfycbxxRWTvLzBOYQnpf3YpfNQlSDW7JixCkVaKxpu-3S-2sNmS8DuM3REre-SBGueD5MTMAA/exec';
+const rpc = window.google?.script?.run;
+const usesRpc = typeof rpc?.withSuccessHandler === 'function' && typeof rpc?.withFailureHandler === 'function';
+const apiTransport = usesRpc ? {
+  label: 'RPC',
+  failureTitle: 'Apps Script 호출 오류',
+  failureMessage: '서버 호출을 완료하지 못했습니다. Google 계정 권한과 Apps Script 실행 로그를 확인하세요.',
+  async call(body) {
+    const raw = await new Promise((resolve, reject) => {
+      rpc.withSuccessHandler(resolve).withFailureHandler(reject).runApiTest(body);
+    });
+    return { raw };
+  }
+} : {
+  label: 'HTTP',
+  failureTitle: 'HTTP 네트워크 오류',
+  failureMessage: '서버에서 응답을 읽지 못했습니다. 연결 상태와 API 주소를 확인하세요.',
+  async call(body) {
+    const response = await fetch(HTTP_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body
+    });
+    const raw = await response.text();
+    return { raw, httpError: response.ok ? undefined : response.status };
+  }
+};
+el('transport').textContent = apiTransport.label;
+
 async function send() {
   const button = el('send');
   if (button.disabled) return;
   clearImage();
   responseText = '';
   el('response').textContent = '';
-  for (const key of ['http', 'code', 'duration']) el(key).textContent = '—';
-  let payload, endpoint, token;
+  for (const key of ['code', 'duration']) el(key).textContent = '—';
+  let payload;
   const body = editor.value;
   try {
     if (needsBuild) throw new Error('변경한 입력을 먼저 요청 JSON에 반영하세요.');
     payload = JSON.parse(body);
     if (!isObject(payload)) throw new Error('요청 JSON은 객체여야 합니다.');
-    endpoint = new URL(el('endpoint').value.trim());
-    if (!['https:', 'http:'].includes(endpoint.protocol) || endpoint.username || endpoint.password) {
-      throw new Error('사용자 정보가 없는 HTTP 또는 HTTPS 주소를 입력하세요.');
-    }
-    token = el('token').value.trim();
-    if (token && endpoint.protocol !== 'https:') throw new Error('액세스 토큰은 HTTPS 주소에만 보낼 수 있습니다.');
+    verifyPhoto?.(payload);
   } catch (error) {
-    const message = error instanceof SyntaxError ? '요청 JSON 문법을 확인하세요.'
-      : error instanceof TypeError ? '엔드포인트 주소를 확인하세요.' : error.message;
-    status('입력 오류', true, message);
+    status('입력 오류', true, error instanceof SyntaxError ? '요청 JSON 문법을 확인하세요.' : error.message);
     return;
   }
 
   if (!isReadOnly(payload) && !window.confirm(
-    `데이터를 변경할 수 있는 요청입니다.\n대상: ${endpoint.origin}\n명령: ${payload.action ?? '미지정'}\n실제 요청을 전송할까요?`
+    `데이터를 변경할 수 있는 요청입니다.\n명령: ${payload.action ?? '미지정'}\n실제 요청을 전송할까요?`
   )) {
     status('전송 취소');
     return;
   }
-
-  const headers = { 'Content-Type': 'application/json; charset=utf-8' };
-  if (token) headers.Authorization = 'Bearer ' + token;
   button.disabled = true;
-  status('전송 중');
+  status('실행 중');
   const started = performance.now();
-  let received;
   try {
-    received = await fetch(endpoint, { method: 'POST', mode: 'cors', redirect: 'follow',
-      credentials: token ? 'omit' : 'include', headers, body, cache: 'no-store' });
-    el('http').textContent = String(received.status);
-    const raw = await received.text();
+    const { raw, httpError } = await apiTransport.call(body);
     let result;
-    try { result = JSON.parse(raw); } catch (_) { /* 원문 표시 */ }
-    responseText = result === undefined ? raw : JSON.stringify(result, null, 2);
+    try { result = JSON.parse(raw); } catch (_) { /* 예상하지 못한 응답 */ }
+    responseText = result === undefined ? String(raw ?? '') : JSON.stringify(result, null, 2);
     el('response').textContent = responseText || '응답 본문이 비어 있습니다.';
-    const apiError = result?.오류;
-    if (typeof apiError?.코드 === 'string') el('code').textContent = apiError.코드;
-    const errorMessage = typeof apiError?.메시지 === 'string' ? apiError.메시지 : '';
-    if (!received.ok) status('HTTP 오류', true, errorMessage || '서버 또는 Google 플랫폼이 요청을 거부했습니다.');
-    else if (result?.성공 === false) status('API 오류', true, errorMessage || 'API가 실패 응답을 반환했습니다.');
-    else if (result?.성공 !== true) status('응답 형식 오류', true,
-      '예상한 API JSON이 아닙니다. Google 로그인, 권한 또는 리다이렉트 응답을 확인하세요.');
-    else {
+    const error = result?.성공 === false ? result.오류 : undefined;
+    if (typeof error?.코드 === 'string') el('code').textContent = error.코드;
+    const errorMessage = typeof error?.메시지 === 'string' ? error.메시지 : '';
+    if (httpError !== undefined) {
+      status(`HTTP 오류 (${httpError})`, true, errorMessage || '서버가 HTTP 오류 응답을 반환했습니다.');
+    } else if (result?.성공 === false) {
+      status('API 오류', true, errorMessage || 'API가 실패 응답을 반환했습니다.');
+    } else if (result?.성공 !== true) {
+      status('응답 형식 오류', true, '예상한 API JSON이 아닙니다.');
+    } else {
       status('요청 성공');
       if (payload.action === 'getPhoto') showImage(result.데이터);
     }
   } catch (_) {
-    status('브라우저 네트워크 오류', true, received
-      ? '응답 본문을 읽지 못했습니다. 변경 요청은 재전송 전에 반영 여부를 확인하세요.'
-      : '요청 또는 응답이 차단되었습니다. CORS, Google 로그인, 리다이렉트 및 네트워크를 확인하세요. 변경 요청은 재전송 전에 반영 여부를 확인하세요.');
+    status(apiTransport.failureTitle, true,
+      apiTransport.failureMessage + ' 변경 요청은 재전송 전에 반영 여부를 확인하세요.');
   } finally {
     el('duration').textContent = Math.round(performance.now() - started).toLocaleString('ko-KR') + ' 밀리초';
     button.disabled = false;
