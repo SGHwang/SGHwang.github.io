@@ -94,9 +94,19 @@ const own = (value, key) => Object.prototype.hasOwnProperty.call(value, key);
 const isObject = value => !!value && typeof value === 'object' && !Array.isArray(value);
 const fields = el('fields');
 const editor = el('payload');
+const membershipFields = {
+  보유회원권id:'문자열', 회원id:'문자열', 회원권id:'문자열', 종류:'문자열', 기간:'문자열', 가격:'숫자',
+  결제일시:'일시', 시작일시:'일시', 만료일:'날짜', 실제만료일:'날짜', 상태:'문자열',
+  이용권연장: { 이용권연장기록id:'문자열', 보유회원권id:'문자열', 신청일시:'일시', 연장사유:'문자열', 연장시작일:'날짜', 연장일수:'숫자' },
+  일시정지: { 일시정지id:'문자열', 보유회원권id:'문자열', 정지시작일:'날짜', 복귀일:'날짜' }
+};
 const viewFields = {
-  회원: { 회원id:'문자열', 회원명:'문자열', 회원사진:'문자열', 신분:'문자열', 연락처:'문자열', 입관일:'날짜', 회원정보:'문자열', 회원상태:'문자열', 최종만료일:'날짜', 보유회원권:'중첩' },
-  보유회원권: { 보유회원권id:'문자열', 회원id:'문자열', 회원권id:'문자열', 종류:'문자열', 기간:'문자열', 가격:'숫자', 결제일시:'일시', 시작일시:'일시', 만료일:'날짜', 실제만료일:'날짜', 상태:'문자열' },
+  회원: { 회원id:'문자열', 회원명:'문자열', 회원사진:'문자열', 신분:'문자열', 연락처:'문자열', 입관일:'날짜',
+    회원정보:'문자열', 회원상태:'문자열', 최종만료일:'날짜',
+    기타연락처: { 기타연락처id:'문자열', 회원id:'문자열', 관계:'문자열', 연락처:'문자열' },
+    보유회원권: membershipFields,
+    습득기술: { 습득기술id:'문자열', 회원id:'문자열', 기술id:'문자열', 기술명:'문자열' } },
+  보유회원권: membershipFields,
   출석: { 출석id:'문자열', 회원id:'문자열', 회원명:'문자열', 출석일시:'일시', 활동내역:'문자열' },
   회원권상품: { 회원권id:'문자열', 종류:'문자열', 기간:'문자열', 가격:'숫자' },
   기술: { 기술id:'문자열', 기술명:'문자열' },
@@ -163,13 +173,13 @@ function check(text, checked = false) {
 function collectChecks(container, schema) {
   const controls = [];
   for (const [key, type] of Object.entries(schema)) {
-    if (type === '중첩') {
+    if (isObject(type)) {
       const nested = node('fieldset');
       nested.className = 'nested';
       nested.append(node('legend', key));
       const group = node('div'); group.className = 'selection';
       nested.append(group);
-      const getNested = collectChecks(group, viewFields[key]);
+      const getNested = collectChecks(group, type);
       container.append(nested);
       controls.push([key, () => getNested()]);
     } else {
@@ -197,7 +207,7 @@ function showView() {
   const filters = new Map();
   filterGroup.append(joinLabel, rows, miniButton('조건 추가', () => {
     const row = node('div'); row.className = 'filter';
-    const field = select(Object.keys(schema).filter(key => schema[key] !== '중첩'));
+    const field = select(Object.keys(schema).filter(key => !isObject(schema[key])));
     const operators = select([]);
     const value = input();
     function syncOperators() {
@@ -588,14 +598,13 @@ function isReadOnly(request) {
   return request.action === 'getPhoto' && request.table === '회원' &&
     typeof request.id === 'string' && keys.every(key => ['action','table','id'].includes(key));
 }
-const HTTP_API_URL =
-  'https://script.google.com/macros/s/AKfycbxxRWTvLzBOYQnpf3YpfNQlSDW7JixCkVaKxpu-3S-2sNmS8DuM3REre-SBGueD5MTMAA/exec';
+const HTTP_API_URL = '/api';
 const rpc = window.google?.script?.run;
 const usesRpc = typeof rpc?.withSuccessHandler === 'function' && typeof rpc?.withFailureHandler === 'function';
 const apiTransport = usesRpc ? {
   label: 'RPC',
   failureTitle: 'Apps Script 호출 오류',
-  failureMessage: '서버 호출을 완료하지 못했습니다. Google 계정 권한과 Apps Script 실행 로그를 확인하세요.',
+  failureMessage: '서버 호출을 완료하지 못했습니다. Apps Script 실행 로그와 배포 설정을 확인하세요.',
   async call(body) {
     const raw = await new Promise((resolve, reject) => {
       rpc.withSuccessHandler(resolve).withFailureHandler(reject).runApiTest(body);
